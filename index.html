@@ -2,36 +2,15 @@
 <html>
   <head>
     <title>Conway's Game of Life</title>
-    <script src="https://d3js.org/d3.v5.min.js"></script>
-    <!-- <style>
-      svg {
-        overflow: visible;
-      }
-      #grid {
-        display: grid;
-        grid-template-columns: repeat(50, 20px);
-        grid-template-rows: repeat(50, 20px);
-      }
-      rect {
-        fill: white;
-        stroke: black;
-        stroke-width: 1px;
-        stroke-opacity: 0.2;
-        transition: fill 0.05s;
-        fill-opacity: 0.1;
-      }
-      .alive {
-        fill: blue;
-      }
-    </style> -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
   </head>
   <body>
     <script>
-      const width = 500;
-      const height = 500;
-      const cellSize = 10;
-      const rows = height / cellSize;
-      const cols = width / cellSize;
+      const height = window.innerHeight - 50;
+      const width = height;
+      const cellSize = 40;
+      const rows = Math.floor(height / cellSize);
+      const cols = rows;
 
       const gameBoard = d3
         .select("body")
@@ -49,7 +28,7 @@
         .attr("x", (d) => (d % cols) * cellSize)
         .attr("y", (d) => Math.floor(d / cols) * cellSize)
         .style("fill", "#fff")
-        .style("stroke", "#222");
+        .style("stroke", "#eee");
 
       let currentState = d3
         .range(rows * cols)
@@ -98,95 +77,14 @@
 
         cells
           .data(currentState)
+          .transition()
+          .duration(100)
           .style("fill", (d) => (d === 1 ? "#222" : "#fff"));
 
-        setTimeout(tick, 1000);
+        setTimeout(tick, 200);
       };
 
       tick();
     </script>
-    <!-- <svg id="grid"></svg>
-    <script>
-      var data = [];
-      for (var i = 0; i < 50; i++) {
-        for (var j = 0; j < 50; j++) {
-          data.push({
-            x: i,
-            y: j,
-            alive: Math.random() < 0.3,
-            age: 1,
-            neighbors: 0,
-          });
-        }
-      }
-
-      var rects = d3
-        .select("#grid")
-        .selectAll("rect")
-        .data(data)
-        .enter()
-        .append("rect")
-        .attr("x", (d) => d.x * 20)
-        .attr("y", (d) => d.y * 20)
-        .attr("width", 20)
-        .attr("height", 20);
-
-      function tick() {
-        rects
-          .data(data)
-          .attr("data-neighbors", (d) => d.neighbors)
-          .classed("alive", (d) => d.alive)
-          .style("fill-opacity", (d) => (d.age / 10 > 1 ? 1 : d.age / 10));
-
-        // update data here
-        var offsets = [-1, 0, 1];
-
-        //for loop to iterate through each data point
-        for (var i = 0; i < data.length; i++) {
-          var dataItem = data[i];
-
-          var neighbors = 0;
-
-          //   console.log("iterating through data point", dataItem, i);
-          //for loop to iterate through each offset
-          for (var j = 0; j < offsets.length; j++) {
-            for (var k = 0; k < offsets.length; k++) {
-              let x = dataItem.x + offsets[j];
-              let y = dataItem.y + offsets[k];
-
-              //   console.log("offset ", j, k);
-            //   if (x === 0 && y === 0) continue;
-
-              if (x >= 0 && x < 50 && y >= 0 && y < 50) {
-                //if statement to check if the neighbor is alive
-                if (data[x + y * 50].alive) {
-                  neighbors++;
-                }
-              }
-
-              dataItem.neighbors = neighbors;
-
-              if (dataItem.alive) {
-                if (neighbors <= 1 || neighbors >= 4) {
-                  dataItem.alive = false;
-                }
-              } else {
-                if (neighbors === 3) {
-                  dataItem.alive = true;
-                  dataItem.age = 0;
-                }
-              }
-
-              dataItem.age = dataItem.alive ? dataItem.age + 1 : 0;
-
-              //   console.log("item ", dataItem);
-            }
-          }
-        }
-      }
-
-      tick();
-      setInterval(tick, 100);
-    </script> -->
   </body>
 </html>
