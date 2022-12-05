@@ -6,11 +6,11 @@
   </head>
   <body>
     <script>
-      const height = window.innerHeight - 50;
-      const width = height;
+      const height = window.innerHeight - 20;
+      const width = window.innerWidth - 20;
       const cellSize = 40;
       const rows = Math.floor(height / cellSize);
-      const cols = rows;
+      const cols = Math.floor(width / cellSize);
 
       const gameBoard = d3
         .select("body")
@@ -79,9 +79,9 @@
           .data(currentState)
           .transition()
           .duration(100)
-          .style("fill", (d) => (d === 1 ? "#222" : "#fff"));
+          .style("fill", (d) => (d === 1 ? "#555" : "#fff"));
 
-        setTimeout(tick, 200);
+        setTimeout(tick, 300);
       };
 
       tick();
