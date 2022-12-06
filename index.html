@@ -44,13 +44,18 @@
         width: 100%;
         height: 100%;
       }
+
+      #pause,
+      #resume {
+        cursor: pointer;
+      }
     </style>
   </head>
   <body>
     <h1 class="title">Conway's Game of Life</h1>
     <h2 class="subtitle">
-      Pause/resume evolution with the spacebar. Click to toggle cell state (also
-      pauses).
+      <span id="pause">Pause</span> / <span id="resume">Resume</span> evolution
+      with the spacebar. Click to toggle cell state (also pauses).
     </h2>
     <div id="grid"></div>
     <script>
@@ -61,6 +66,16 @@
       const rows = Math.floor(height / cellSize);
       const cols = Math.floor(width / cellSize);
 
+      const pauseLabel = d3
+        .select("#pause")
+        .style("text-decoration", "underline")
+        .on("click", () => {
+          toggleEvolution();
+        });
+      const resumeLabel = d3.select("#resume").on("click", () => {
+        toggleEvolution();
+      });
+
       const color = "#0077b6";
 
       let timer = d3.interval(() => {
@@ -69,18 +84,27 @@
 
       let running = true;
 
+      function toggleEvolution() {
+        if (running) {
+          pauseLabel.style("text-decoration", "none");
+          resumeLabel.style("text-decoration", "underline");
+
+          running = false;
+          timer.stop();
+        } else {
+          pauseLabel.style("text-decoration", "underline");
+          resumeLabel.style("text-decoration", "none");
+
+          running = true;
+          timer = d3.interval(() => {
+            tick();
+          }, 750);
+        }
+      }
+
       d3.select(window).on("keydown", function (e) {
         if (e.code === "Space") {
-          if (running) {
-            running = false;
-            timer.stop();
-          } else {
-            running = true;
-
-            timer = d3.interval(() => {
-              tick();
-            }, 750);
-          }
+          toggleEvolution();
         }
       });
 
