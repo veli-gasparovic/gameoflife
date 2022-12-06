@@ -40,7 +40,7 @@
 
       let currentState = d3
         .range(rows * cols)
-        .map(() => (Math.random() < 0.5 ? 1 : 0));
+        .map(() => (Math.random() < 0.25 ? 1 : 0));
 
       const cellGroups = gameBoard
         .selectAll("rect")
@@ -60,26 +60,26 @@
         .attr("width", cellSize)
         .attr("height", cellSize)
         .attr("stroke", color) //"#eee")
-        .attr('stroke-width', .1)
+        .attr("data-x", (d) => d % cols)
+        .attr("data-y", (d) => Math.floor(d / cols))
+        .attr("stroke-width", 0.1)
         .attr("fill", "white")
         .on("click", function (d) {
           //read x and y from the data attributes
           const x = +d3.select(this).attr("data-x");
           const y = +d3.select(this).attr("data-y");
 
-          console.log(currentState[y * cols + x]);
-
           //toggle the cell
           currentState[y * cols + x] = 1 - currentState[y * cols + x];
 
-          console.log("after", currentState[y * cols + x]);
+          updateCells();
         });
 
       const cells = cellGroups
         .append("rect")
         .classed("cell", true)
         .attr("width", cellSize - 6)
-        .attr("height", cellSize - 6)        
+        .attr("height", cellSize - 6)
         .attr("data-x", (d) => d % cols)
         .attr("data-y", (d) => Math.floor(d / cols))
         .attr("rx", 5)
@@ -91,15 +91,12 @@
           const x = +d3.select(this).attr("data-x");
           const y = +d3.select(this).attr("data-y");
 
-          console.log(currentState[y * cols + x]);
-
           //toggle the cell
           currentState[y * cols + x] = 1 - currentState[y * cols + x];
-
-          console.log("after", currentState[y * cols + x]);
+          updateCells();
         });
 
-      const tick = () => {
+      function tick() {
         const nextState = Array(rows * cols).fill(0);
 
         for (let row = 0; row < rows; row++) {
@@ -140,6 +137,11 @@
 
         currentState = nextState;
 
+        updateCells();
+        setTimeout(tick, 750);
+      }
+
+      function updateCells() {
         cells
           .data(currentState)
           .transition()
@@ -150,9 +152,7 @@
           .attr("y", (d) => (d === 1 ? 2 : cellSize / 2))
           .style("fill", (d) => (d === 1 ? color : "#fff"));
         //   .style("stroke", "#333");
-
-        setTimeout(tick, 750);
-      };
+      }
 
       tick();
     </script>
